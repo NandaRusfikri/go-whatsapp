@@ -1,4 +1,4 @@
-module go-whatsapp
+module github.com/nandarusfikri/go-whatsapp
 
 go 1.20
 

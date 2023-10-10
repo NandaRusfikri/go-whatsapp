@@ -1,20 +1,10 @@
-# Set the compiler to use for building the program
-CC=go
 
-# Set the options to use when compiling the program
-GOFLAGS=-ldflags="-s -w"
-
-# Set the name of the output binary
-OUTPUT=crm-tickets
-
-# Set the list of source files to compile
-
-# Set the GOOS environment variable to "linux"
+OUTPUT=go-whatsapp
 export GOOS=linux
 export CGO_ENABLED=0
 # Define the build target
 build:
-	$(CC) build -a -installsuffix cgo $(GOFLAGS) -o $(OUTPUT) main.go
+	go build  -o $(OUTPUT) main.go
 
 # Define the clean target
 clean:
