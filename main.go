@@ -29,21 +29,27 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{
 			"contact": "nandarusfikri@gmail.com",
 			"message": "Whatsapp Gateway",
+			"Author":  "NandaRusfikri",
 		})
 	})
-	router.POST("/", func(c *gin.Context) {
+	router.POST("/send_message", func(c *gin.Context) {
 		var input Message
 
 		if err := c.ShouldBindJSON(&input); err != nil {
 			c.Abort()
 			return
 		}
-		sendMessage(conn, input.Phone, input.Message)
+		if err := sendMessage(conn, input.DestinationNumber, input.Message); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "failed",
+				"message": err.Error(),
+			})
+		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"status":  "success",
 			"message": "Pesan berhasil dikirim",
-			"nomor":   input.Phone,
+			"nomor":   input.DestinationNumber,
 			"pesan":   input.Message,
 		})
 	})
@@ -61,8 +67,8 @@ func main() {
 }
 
 type Message struct {
-	Phone   string `json:"phone" binding:"required"`
-	Message string `json:"message" binding:"required"`
+	DestinationNumber string `json:"destination_number" binding:"required"`
+	Message           string `json:"message" binding:"required"`
 }
 
 func eventHandler(evt interface{}) {
@@ -94,7 +100,7 @@ func sendMessage(client *whatsmeow.Client, phone string, message string) error {
 func Connect() *whatsmeow.Client {
 	dbLog := waLog.Stdout("Database", "DEBUG", true)
 	// Make sure you add appropriate DB connector imports, e.g. github.com/mattn/go-sqlite3 for SQLite
-	container, err := sqlstore.New("sqlite3", "file:examplestore.db?_foreign_keys=on", dbLog)
+	container, err := sqlstore.New("sqlite3", "file:store_whatsapp.db?_foreign_keys=on", dbLog)
 	if err != nil {
 		log.Fatalln(err)
 	}
