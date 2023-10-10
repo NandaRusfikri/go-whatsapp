@@ -39,7 +39,7 @@ func main() {
 			c.Abort()
 			return
 		}
-		if err := sendMessage(conn, input.DestinationNumber, input.Message); err != nil {
+		if err := SendWAMessage(conn, input.DestinationNumber, input.Message); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"status":  "failed",
 				"message": err.Error(),
@@ -78,7 +78,7 @@ func eventHandler(evt interface{}) {
 	}
 }
 
-func sendMessage(client *whatsmeow.Client, phone string, message string) error {
+func SendWAMessage(client *whatsmeow.Client, phone string, message string) error {
 	// Buat konteks
 	ctx := context.Background()
 
